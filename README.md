@@ -1,5 +1,11 @@
 # Purpose
 
+Provide generic AWS AppSync Resolvers to interact with an Aurora MySQL Serverless backend data source. 
+
+The focus will first be on flexible ListItems() calls, since these are more complex. Atomic / single-item gets, deletes, updates are not a focus right now. 
+
+# Background
+
 The AWS Amplify CLI provides decent out-of-the-box resolvers for DynamoDB backends that support use filtering 
 listItems() API calls. As best I can tell, the AWS Amplify CLI does **not** provide the same level of support 
 when creating an API from an existing Aurora Serverless data source. So, this project is my attempt to create
@@ -11,9 +17,13 @@ For now, I'm periodically updating this repo with resolvers I'm creating for a s
 service demos. At a later time, I would like to run through and rename columns / tables to give them a more
 generic use case or class name. 
 
+# Disclaimer
+
+I am new to writing VTL for AppSync. Please carefully review before relying on my work. 
+
 # Current Functionality
 
-## Requests
+## ListItems
 
 Requests support: 
 
