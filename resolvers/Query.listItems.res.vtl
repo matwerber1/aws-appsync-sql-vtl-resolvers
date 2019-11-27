@@ -1,0 +1,14 @@
+## Raise a GraphQL field error in case of a datasource invocation error
+#if($ctx.error)
+    $utils.error($ctx.error.message, $ctx.error.type)
+#end
+
+## Translate the clunky response into a nice, readable array:
+#set( $response = {})
+$util.qr( $response.put('items', $utils.rds.toJsonObject($ctx.result)[0]))
+
+## Indexes are zero-based, so we subtract 1 from size to get proper index of last item
+#set( $lastItemIndex = $response.items.size() - 1)
+#set( $lastItemValue = $response.items[$lastItemIndex].id)
+$util.qr( $response.put('nextToken', $lastItemValue))
+$utils.toJson($response)
