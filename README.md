@@ -18,5 +18,6 @@ generic use case or class name.
 Requests support: 
 
 * **nextToken** - optional INT field that dicates the item from which the list query should begin. 
-* **limit** - optional INT field determining how many items to return
-* **sortOrder** - optional STRING of value DESC or ASC, indiciating sort order. Default is ASC
+* **limit** - optional INT field determining how many items to return.
+* **sortOrder** - optional STRING of value DESC or ASC, indiciating sort order. Default is ASC.
+* **sortKey** - optional STRING field that determines the single field by wich results are ordered; default is "id" field. 
