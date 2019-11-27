@@ -1,43 +1,31 @@
 ## This is our starting point; we will expand this based on the input
-#set($selectClause = "SELECT * FROM demo")
+#set($selectClause = "SELECT * FROM items")
 
 ## Since we want to support pagination, we need to order our results.
 ## If the user didn't provide a specific sort order, we will sort by ID, by default
-#if ($ctx.args.sortKey)
-  #set( $sortKey = $ctx.args.sortKey)
-#else
-  #set( $sortKey = "id")
-#end
+#set( $sortKey = $util.defaultIfNull($ctx.args.sortKey, "id") )
 
 ## If input specified a sort order, use that; otherwise, sort results ascending:
-#if ($ctx.args.sortOrder)
-  #set( $sortOrder = $ctx.args.sortOrder)
-#else
-  #set( $sortOrder = "ASC")
-#end
-
-## By default, assume our sort operator is for ascending order:
-#set( $sortOperator = ">")
-
-## If request specifies descending sort, adjust accordingly
+#set( $sortOrder = $util.defaultIfNull($ctx.args.sortOrder, "ASC") )
 #if ($sortOrder == "DESC")
   #set ($sortOperator = "<")
+#else
+  #set( $sortOperator = ">")
 #end
 
 ## Build our order clause, which might look like: ORDER BY someField ASC
 #set ($orderClause = "ORDER BY ${sortKey} ${sortOrder}")
 
-## These are the components that make up our later final where clause:
-#set ($whereClauses = [])
-
-## This is the final where clause we pass to RDS: 
+## This is the final where clause we will later send to RDS: 
 #set ($finalWhereClause = "")
 
-## If a nextToken is specified, we use this to determine where to start returning results.
-## This supports pagination efforts: 
+## We will build the final where clause above based on the individual clauses below: 
+#set ($whereClauses = [])
+
+## If a nextToken is specified, we use this to determine where to start returning results:
 #if( $ctx.args.nextToken )
   #set( $nextToken = $ctx.args.nextToken)
-  ## Example og whereClause = "id               >          99999999"
+  ## For example, the statement might look like "WHERE id > 12345"
   $util.qr($whereClauses.add("${sortKey} ${sortOperator} ${nextToken}"))
 #end
 
@@ -50,14 +38,12 @@
   #end
 #end
 
-## Optionally, define a per-query limit
-#set( $limitClause = "")
-#if( $ctx.args.limit)
-  #set( $limitClause = "LIMIT ${ctx.args.limit}")
-#end
+## Limit the number of rows returned; if no limit specified, assume a default of 25: 
+#set( $limit = $util.defaultIfNull($ctx.args.limit, 25) )
 
 ## This is our final SQL command
-#set($selectStatement = "${selectClause} ${finalWhereClause} ${orderClause} ${limitClause}")
+#set($selectStatement = "${selectClause} ${finalWhereClause} ${orderClause} LIMIT ${limit}")
+
 {
   "version": "2018-05-29",
   "statements":   ["${selectStatement}"]
