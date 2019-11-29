@@ -1,7 +1,7 @@
 #*
-  TODO: 
-	- Figure out proper santization for inputs. (partially started) 
-    - Add support for contains, notContains, between, and beginsWith
+  We will enclose all column IDs in backticks (`), so we must check that if the user supplied any backticks, they are escaped.
+  
+  The same applies for any input values (e.g. used for filters). In that case, we enclose them in single quotes, so we need to check that if an input has any single quotes, they are escaped. 
 *#
 
 
@@ -62,6 +62,16 @@
         #if($filter.gt) ## greater than
           $util.qr($whereClauses.add("`${filter.fieldName}` > '${filter.gt}'"))
         #end
+        #if($filter.in)
+          #set ($inList = "")
+          #foreach($item in $filter.in)
+            #if ($foreach.count > 1)
+              #set( $inList = $inList + ", " )
+            #end
+            #set( $inList = $inList + "'${item}'")
+          #end
+          $util.qr($whereClauses.add("`${filter.fieldName}` IN (${inList})"))
+        #end
     #end
 #end
 
@@ -79,7 +89,7 @@
 #set( $limit = $util.defaultIfNull($ctx.args.limit, 25) )
 
 ## This is our starting point; we will expand this based on the input
-#set($selectClause = "SELECT * FROM items")
+#set($selectClause = "SELECT * FROM demo")
 
 ## This is our final SQL command
 #set($selectStatement = "${selectClause} ${finalWhereClause} ${orderClause} LIMIT ${limit}")
