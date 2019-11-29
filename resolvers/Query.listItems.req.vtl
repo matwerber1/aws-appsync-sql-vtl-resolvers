@@ -124,27 +124,27 @@
   #end
   
   #if($filter.like)
-    #if(filter.like != "string")
+    #if($filter.like != "string")
       $util.error("Cannot use like filter with ${filter.fieldName} because filter.fieldType is not 'string'")
     #end
     $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '%${filter.like}%'"))
   #end
   
   #if($filter.notLike)
-    #if(filter.notLike != "string")
+    #if($filter.notLike != "string")
       $util.error("Cannot use notLike filter with ${filter.fieldName} because filter.fieldType is not 'string'")
     #end
     $util.qr($whereClauses.add("`${filter.fieldName}` NOT LIKE '%${filter.notLike}%'"))
   #end
   
   #if($filter.beginsWith)
-    #if(filter.beginsWith != "string")
+    #if($filter.beginsWith != "string")
       $util.error("Cannot use BeginsWith filter with ${filter.fieldName} because filter.fieldType is not 'string'")
     #end
     $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '${filter.beginsWith}%'"))
   #end
   #if($filter.between)
-    #if(filter.between != "string")
+    #if($filter.between != "string")
       $util.error("Cannot use between filter with ${filter.fieldName} because filter.fieldType is not 'string'")
     #end
     $util.qr($whereClauses.add("`${filter.fieldName}` BETWEEN ${filter.between[0]} AND ${filter.between[1]}"))
