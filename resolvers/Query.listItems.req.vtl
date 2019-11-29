@@ -43,55 +43,112 @@
 #set( $filters = $ctx.args.filters)
 
 #foreach ($filter in $filters)
-	#if ($filter.fieldType == "string")
-  		#if($filter.eq)  ## equals
-          $util.qr($whereClauses.add("`${filter.fieldName}` = '${filter.eq}'"))
-        #end
-        #if($filter.ne)  ## not equals
-          $util.qr($whereClauses.add("`${filter.fieldName}` != '${filter.ne}'"))
-        #end
-        #if($filter.le)  ## less than or equal to
-          $util.qr($whereClauses.add("`${filter.fieldName}` <= '${filter.le}'"))
-        #end
-        #if($filter.lt)  ## less than
-          $util.qr($whereClauses.add("`${filter.fieldName}` < '${filter.lt}'"))
-        #end
-        #if($filter.ge) ## greater than or equal to
-          $util.qr($whereClauses.add("`${filter.fieldName}` >= '${filter.ge}'"))
-        #end
-        #if($filter.gt) ## greater than
-          $util.qr($whereClauses.add("`${filter.fieldName}` > '${filter.gt}'"))
-        #end
-        #if($filter.in)
-          #set ($inList = "")
-          #foreach($item in $filter.in)
-            #if ($foreach.count > 1)
-              #set( $inList = $inList + ", " )
-            #end
-            #set( $inList = $inList + "'${item}'")
-          #end
-          $util.qr($whereClauses.add("`${filter.fieldName}` IN (${inList})"))
-        #end
-        #if($filter.notIn)
-          #set ($notInList = "")
-          #foreach($item in $filter.notIn)
-            #if ($foreach.count > 1)
-              #set( $notInList = $notInList + ", " )
-            #end
-            #set( $notInList = $notInList + "'${item}'")
-          #end
-          $util.qr($whereClauses.add("`${filter.fieldName}` NOT IN (${notInList})"))
-        #end
-        #if($filter.like)
-          $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '%${filter.like}%'"))
-        #end
-        #if($filter.notLike)
-          $util.qr($whereClauses.add("`${filter.fieldName}` NOT LIKE '%${filter.notLike}%'"))
-        #end
-        #if($filter.beginsWith)
-          $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '${filter.beginsWith}%'"))
-        #end
+  
+  #if($filter.eq)  ## equals
+    #if ($filter.fieldType == "string")
+      $util.qr($whereClauses.add("`${filter.fieldName}` = '${filter.eq}'"))
+    #else
+      $util.qr($whereClauses.add("`${filter.fieldName}` = ${filter.eq}"))
     #end
+  #end
+  
+  #if($filter.ne)  ## not equals
+  	#if ($filter.fieldType == "string")
+      $util.qr($whereClauses.add("`${filter.fieldName}` != '${filter.ne}'"))
+    #else
+      $util.qr($whereClauses.add("`${filter.fieldName}` != ${filter.ne}"))
+    #end
+  #end
+  
+  #if($filter.le)  ## less than or equal to
+  	#if ($filter.fieldType == "string")
+      $util.qr($whereClauses.add("`${filter.fieldName}` <= '${filter.le}'"))
+    #else
+      $util.qr($whereClauses.add("`${filter.fieldName}` <= ${filter.le}"))
+    #end
+  #end
+  
+  #if($filter.lt)  ## less than
+  	#if ($filter.fieldType == "string")
+      $util.qr($whereClauses.add("`${filter.fieldName}` < '${filter.lt}'"))
+    #else
+      $util.qr($whereClauses.add("`${filter.fieldName}` < ${filter.lt}"))
+    #end
+    
+  #end
+  #if($filter.ge) ## greater than or equal to
+  	#if ($filter.fieldType == "string")
+      $util.qr($whereClauses.add("`${filter.fieldName}` >= '${filter.ge}'"))
+    #else
+      $util.qr($whereClauses.add("`${filter.fieldName}` >= ${filter.ge}"))
+    #end
+    
+  #end
+  #if($filter.gt) ## greater than
+  	#if ($filter.fieldType == "string")
+      $util.qr($whereClauses.add("`${filter.fieldName}` > '${filter.gt}'"))
+    #else
+      $util.qr($whereClauses.add("`${filter.fieldName}` > ${filter.gt}"))
+    #end
+    
+  #end
+  
+  #if($filter.in)
+    #set ($inList = "")
+    #foreach($item in $filter.in)
+      #if ($foreach.count > 1)
+        #set( $inList = $inList + ", " )
+      #end
+      #if ($filter.fieldType == "string")
+        #set( $inList = $inList + "'${item}'")
+      #else
+        #set( $inList = $inList + "${item}")
+      #end
+    #end
+    $util.qr($whereClauses.add("`${filter.fieldName}` IN (${inList})"))
+  #end
+  
+  #if($filter.notIn)
+    #set ($notInList = "")
+    #foreach($item in $filter.notIn)
+      #if ($foreach.count > 1)
+        #set( $notInList = $notInList + ", " )
+      #end
+      #if ($filter.fieldType == "string")
+        #set( $notInList = $notInList + "'${item}'")
+      #else
+        #set( $notInList = $notInList + "${item}")
+      #end
+    #end
+    $util.qr($whereClauses.add("`${filter.fieldName}` NOT IN (${notInList})"))
+  #end
+  
+  #if($filter.like)
+    #if(filter.like != "string")
+      $util.error("Cannot use like filter with ${filter.fieldName} because filter.fieldType is not 'string'")
+    #end
+    $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '%${filter.like}%'"))
+  #end
+  
+  #if($filter.notLike)
+    #if(filter.notLike != "string")
+      $util.error("Cannot use notLike filter with ${filter.fieldName} because filter.fieldType is not 'string'")
+    #end
+    $util.qr($whereClauses.add("`${filter.fieldName}` NOT LIKE '%${filter.notLike}%'"))
+  #end
+  
+  #if($filter.beginsWith)
+    #if(filter.beginsWith != "string")
+      $util.error("Cannot use BeginsWith filter with ${filter.fieldName} because filter.fieldType is not 'string'")
+    #end
+    $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '${filter.beginsWith}%'"))
+  #end
+  #if($filter.between)
+    #if(filter.between != "string")
+      $util.error("Cannot use between filter with ${filter.fieldName} because filter.fieldType is not 'string'")
+    #end
+    $util.qr($whereClauses.add("`${filter.fieldName}` BETWEEN ${filter.between[0]} AND ${filter.between[1]}"))
+  #end
 #end
 
 
