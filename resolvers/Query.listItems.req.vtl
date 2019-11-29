@@ -82,6 +82,12 @@
           #end
           $util.qr($whereClauses.add("`${filter.fieldName}` NOT IN (${notInList})"))
         #end
+        #if($filter.like)
+          $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '%${filter.like}%'"))
+        #end
+        #if($filter.notLike)
+          $util.qr($whereClauses.add("`${filter.fieldName}` NOT LIKE '%${filter.notLike}%'"))
+        #end
     #end
 #end
 
