@@ -21,6 +21,12 @@ generic use case or class name.
 
 I am new to writing VTL for AppSync. Please carefully review before relying on my work. 
 
+# Thoughts
+
+1. Sorting on a non-unique / non-primary key
+ 
+ If sorting on a non-unique or non-primary key, subsequent paginated queries might request the same items again. We need to think of a way to make these types of queries deterministic. I think it might be as simple as just sorting by a combination of the user-specified non-primary key, plus the primary key. For example, if user specifies sort by create date, we will actually `ORDER BY CREATE_DATE, ID`, and in addition to returning a `NextToken: (next date)`, we will also return `NextId: = last-processed ID`
+
 # Current Functionality
 
 ## ListItems
