@@ -1,5 +1,16 @@
-## This is our starting point; we will expand this based on the input
-#set($selectClause = "SELECT * FROM items")
+#*
+  TODO: 
+	- Figure out proper santization for inputs. (partially started) 
+    - Add support for contains, notContains, between, and beginsWith
+*#
+
+
+## We should scrub / validate all inputs received for proper format and check that unescaped quotes are not present: 
+#set($validSortKey = !($util.matches("^.*(?<!')'('')*(?!').*$",$ctx.args.sortKey)))
+
+#if (!$validSortKey)
+    $util.error("Sort key is not valid.")
+#end
 
 ## Since we want to support pagination, we need to order our results.
 ## If the user didn't provide a specific sort order, we will sort by ID, by default
@@ -29,6 +40,32 @@
   $util.qr($whereClauses.add("${sortKey} ${sortOperator} ${nextToken}"))
 #end
 
+#set( $filters = $ctx.args.filters)
+
+#foreach ($filter in $filters)
+	#if ($filter.fieldType == "string")
+  		#if($filter.eq)  ## equals
+          $util.qr($whereClauses.add("`${filter.fieldName}` = '${filter.eq}'"))
+        #end
+        #if($filter.ne)  ## not equals
+          $util.qr($whereClauses.add("`${filter.fieldName}` != '${filter.ne}'"))
+        #end
+        #if($filter.le)  ## less than or equal to
+          $util.qr($whereClauses.add("`${filter.fieldName}` <= '${filter.le}'"))
+        #end
+        #if($filter.lt)  ## less than
+          $util.qr($whereClauses.add("`${filter.fieldName}` < '${filter.lt}'"))
+        #end
+        #if($filter.ge) ## greater than or equal to
+          $util.qr($whereClauses.add("`${filter.fieldName}` >= '${filter.ge}'"))
+        #end
+        #if($filter.gt) ## greater than
+          $util.qr($whereClauses.add("`${filter.fieldName}` > '${filter.gt}'"))
+        #end
+    #end
+#end
+
+
 ## Build our final where clause by concatenating individual where clauses
 #foreach ($whereClause in $whereClauses)
   #if( $foreach.count == 1)
@@ -40,6 +77,9 @@
 
 ## Limit the number of rows returned; if no limit specified, assume a default of 25: 
 #set( $limit = $util.defaultIfNull($ctx.args.limit, 25) )
+
+## This is our starting point; we will expand this based on the input
+#set($selectClause = "SELECT * FROM items")
 
 ## This is our final SQL command
 #set($selectStatement = "${selectClause} ${finalWhereClause} ${orderClause} LIMIT ${limit}")
