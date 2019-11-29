@@ -72,6 +72,16 @@
           #end
           $util.qr($whereClauses.add("`${filter.fieldName}` IN (${inList})"))
         #end
+        #if($filter.notIn)
+          #set ($notInList = "")
+          #foreach($item in $filter.notIn)
+            #if ($foreach.count > 1)
+              #set( $notInList = $notInList + ", " )
+            #end
+            #set( $notInList = $notInList + "'${item}'")
+          #end
+          $util.qr($whereClauses.add("`${filter.fieldName}` NOT IN (${notInList})"))
+        #end
     #end
 #end
 
