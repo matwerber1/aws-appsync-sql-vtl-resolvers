@@ -1,0 +1,39 @@
+type Query {
+	ListItems(
+		sortKey: String,
+		sortOrder: String,
+		limit: Int,
+		nextToken: Int,
+    filters: [ItemFilterInput]
+	): ItemConnection
+}
+
+type ItemConnection {
+	nextToken: Int
+	items: [Item]
+}
+
+type Item {
+	id: Int!
+	version: Int!
+	name: String!
+	description: String!
+	created_by: String!
+	type: String!
+	status: String!
+}
+
+input ItemFilterInput {
+	fieldName: String
+	fieldType: String
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
