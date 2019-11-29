@@ -88,6 +88,9 @@
         #if($filter.notLike)
           $util.qr($whereClauses.add("`${filter.fieldName}` NOT LIKE '%${filter.notLike}%'"))
         #end
+        #if($filter.beginsWith)
+          $util.qr($whereClauses.add("`${filter.fieldName}` LIKE '${filter.beginsWith}%'"))
+        #end
     #end
 #end
 
