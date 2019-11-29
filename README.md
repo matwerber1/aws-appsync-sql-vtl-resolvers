@@ -31,3 +31,15 @@ Requests support:
 * **limit** - optional INT field determining how many items to return.
 * **sortOrder** - optional STRING of value DESC or ASC, indiciating sort order. Default is ASC.
 * **sortKey** - optional STRING field that determines the single field by wich results are ordered; default is "id" field. 
+* **filters** - an array of objects, where each object is translated to a WHERE clause, separated by ANDs
+  * each object must contain:
+    * **fieldName** - name of the field we are filtering on
+    * **fieldType** - one of 'string', 'number'   (which impacts whether or not we enclose values in quotes)
+  * each object contains one or more of: 
+    * **eq** - a single value, resulting in `WHERE ${fieldName} = ${eq}`
+    * **ne** - a single value, resulting in `WHERE ${fieldName} != ${ne}`
+    * **le** - a single value, resulting in `WHERE ${fieldName} <= ${le}`
+    * **lt** - a single value, resulting in `WHERE ${fieldName} < ${lt}`
+    * **ge** - a single value, resulting in `WHERE ${fieldName} > ${ge}`
+    * **gt** - a single value, resulting in `WHERE ${fieldName} >= ${gt}`
+    * **in** - an array of values, resulting in `WHERE $fieldName IN ($in[0], $in[1], ...)`
