@@ -11,11 +11,9 @@ listItems() API calls. As best I can tell, the AWS Amplify CLI does **not** prov
 when creating an API from an existing Aurora Serverless data source. So, this project is my attempt to create
 flexible request and response resolvers for a Aurora Serverless MySQL backend. 
 
-# Note
+# Update
 
-For now, I'm periodically updating this repo with resolvers I'm creating for a specific project, related to
-service demos. At a later time, I would like to run through and rename columns / tables to give them a more
-generic use case or class name. 
+While I made a good deal of progress, I ran into challenges... certain standard programming functionality not available in the AppSync / VTL specification makes it quite tricky to achieve the degree of flexibility I want. So, I've decided to instead use a Node Lambda resolver that will connect to my RDS backend. When complete, I'll create and link to that project.
 
 # Disclaimer
 
